@@ -4,7 +4,9 @@
 //GLOBAL VARIABLES
 int16_t Putback;
 Token Cur_Token;
+ASTnode * AST_Tree;
 FILE * source_file;
+FILE * output_file;
 
 //for debug output
 uint32_t Cur_Line;
@@ -12,7 +14,7 @@ uint32_t Cur_Symdol;
 
 
 void usage() {
-    printf("Usage: fc filename.c");
+    printf("Usage: ./fc %%filename%%.c");
 }
 
 //init global variables
@@ -36,24 +38,18 @@ int main(int argc, char ** argv) {
     if (source_file == NULL) {
         fprintf(stderr, "%s\n", strerror(errno));
     }
+    
+    getToken();
+    AST_Tree = prattParser(0);
 
-
-
-    /*//body
-    getToken(source_fd);
-
-    //for (int i = 0; i < 10; i++) {
-    while (Cur_Token.token_type != T_EOF) {
-        printf("Token type: %d\n", Cur_Token.token_type);
-        if (Cur_Token.token_type == T_INTLIT) {
-            printf("Token value: %d\n", Cur_Token.int_value);
-        }
-        printf("=======================\n");
-        getToken(source_fd);
-    }*/
-
-
-
+    testParser(AST_Tree, NULL, 0);
     fclose(source_file);
+
+    output_file = fopen("out.s", "w");
+    generateCode(AST_Tree);
+    
+
+
+    fclose(output_file);
     return 0;
 }

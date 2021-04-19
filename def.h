@@ -1,6 +1,8 @@
 #ifndef HAHA_BENIS_DEF
 #define HAHA_BENIS_DEF
 
+#define _TOKEN_MAX_ID 5
+
 // Token types
 enum {
   T_EOF, T_PLUS, T_MINUS, T_STAR, T_SLASH, T_INTLIT
@@ -14,7 +16,7 @@ typedef struct Token_m {
 
 // AST node types
 enum {
-  AST_ADD, AST_SUBTRACT, AST_MULTIPLY, AST_DIVIDE, AST_INTLIT
+  AST_ADD, AST_SUB, AST_MUL, AST_DIV, AST_INTLIT
 };
 
 // Abstract Syntax Tree structure
