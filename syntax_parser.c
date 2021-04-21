@@ -80,26 +80,26 @@ ASTnode * prattParser(int ptp) {
     ASTnode * left, * right;
     int tokentype;
 
-    printf("1) TOKEN: %d\n", Cur_Token.token_type);
+    //printf("1) TOKEN: %d\n", Cur_Token.token_type);
     left = getPrimary();
 
 
     tokentype = Cur_Token.token_type;
-    printf("2) TOKEN: %d\n", tokentype);
-    if (tokentype == T_EOF) {
+    //printf("2) TOKEN: %d\n", tokentype);
+    if (tokentype == T_SEMI) {
         return left;
     }
 
     while (getPrec(tokentype) > ptp) {
         
         getToken();
-        printf("3) TOKEN: %d\n", tokentype);
+        //printf("3) TOKEN: %d\n", tokentype);
         right = prattParser(OpPrec[tokentype]);
 
         left = getBinaryOp(tokentype, left, right);
 
         tokentype = Cur_Token.token_type;
-        if (tokentype == T_EOF) {
+        if (tokentype == T_SEMI) {
             return left;
         }
     }

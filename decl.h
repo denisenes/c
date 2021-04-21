@@ -22,6 +22,7 @@ void testParser(ASTnode * cur_node, ASTnode * parent, int side);
 void generateCode();
 
 // asm.c
+void asm64_freeall_reg();
 int asm64_add(int reg1, int reg2);
 int asm64_sub(int reg1, int reg2);
 int asm64_div(int reg1, int reg2);

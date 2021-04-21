@@ -14,9 +14,11 @@ static int asm64_allocate_reg() {
     }
 }
 
+static void asm64_free_reg(int i) {
+    reg_pool[i] = 0;
 }
 
-static void asm64_freeall_reg() {
+void asm64_freeall_reg() {
     for (int i = 0; i < 4; i++) {
         reg_pool[i] = 0;
     }

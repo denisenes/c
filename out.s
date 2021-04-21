@@ -46,6 +46,20 @@ main:
 	addq	%r9, %r8
 	movq	%r8, %rdi
 	call	printint
+	movq	$22, %r8
+	movq	$27, %r9
+	addq	%r9, %r8
+	movq	%r8, %rdi
+	call	printint
+	movq	$145, %r8
+	movq	$10, %r9
+	imulq	%r9, %r8
+	movq	$5, %r9
+	movq	$10, %r10
+	imulq	%r10, %r9
+	subq	%r9, %r8
+	movq	%r8, %rdi
+	call	printint
 	movl	$0, %eax
 	popq	%rbp
 	ret

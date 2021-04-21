@@ -38,18 +38,13 @@ int main(int argc, char ** argv) {
     if (source_file == NULL) {
         fprintf(stderr, "%s\n", strerror(errno));
     }
-    
+
     getToken();
-    AST_Tree = prattParser(0);
-
-    testParser(AST_Tree, NULL, 0);
-    fclose(source_file);
-
     output_file = fopen("out.s", "w");
-    generateCode(AST_Tree);
+    generateCode();
     
-
-
+    
+    fclose(source_file);
     fclose(output_file);
     return 0;
 }

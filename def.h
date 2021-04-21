@@ -3,9 +3,19 @@
 
 #define _TOKEN_MAX_ID 5
 
+#define ASCII_DIGITS_OFFSET 48
+#define KEYWORD_BUFF_LEN 512
+
 // Token types
 enum {
-  T_EOF, T_PLUS, T_MINUS, T_STAR, T_SLASH, T_INTLIT
+  T_EOF,
+  T_PLUS,
+  T_MINUS,
+  T_STAR,
+  T_SLASH,
+  T_INTLIT,
+  T_SEMI,
+  T_PRINT
 };
 
 // Token structure

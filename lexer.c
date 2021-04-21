@@ -2,7 +2,7 @@
 #include "def.h"
 #include "global.h"
 
-#define ASCII_DIGITS_OFFSET 48
+uint8_t buf[KEYWORD_BUFF_LEN];
 
 // Delimiters for lexer
 uint8_t * delims = " \n";
@@ -57,6 +57,36 @@ static int get_int() {
     return intlit;
 }
 
+static int match_keyword() {
+    switch (buf[0]) {
+        case 'p':
+            if (!strcmp(buf, "print\0"))
+                return T_PRINT;
+            break;
+        default:
+            fprintf(stderr, "Syntax error: unknown identifier %s\n", buf);
+            break;
+    }
+}
+
+static int get_keyword() {
+    int16_t c = next(source_file);
+    int i = 0;
+
+    while (isalpha(c) || c == '_' || isdigit(c)) {
+        if (i >= KEYWORD_BUFF_LEN) {
+            fprintf(stderr, "Identifier is too long on line %d\n", Cur_Line);
+        }
+        buf[i] = c;
+        c = next();
+        i++;
+    }
+
+    buf[i] = 0;
+    Putback = c;
+    return match_keyword();
+}
+
 void getToken() {
     int16_t c = next_ignore_delims(source_file);
 
@@ -74,6 +104,9 @@ void getToken() {
     case '/':
         Cur_Token.token_type = T_SLASH;
         break;
+    case ';':
+        Cur_Token.token_type = T_SEMI;
+        break;
     case -1:
         Cur_Token.token_type = T_EOF;
         break;
@@ -81,7 +114,10 @@ void getToken() {
         if (isdigit(c)) {
             Cur_Token.token_type = T_INTLIT;
             Putback = c;
-            Cur_Token.int_value = get_int(source_file);
+            Cur_Token.int_value = get_int();
+        } else if (isalpha(c) || c == '_') {
+            Putback = c;
+            Cur_Token.token_type = get_keyword();
         } else {
             fprintf(stderr, "Syntax error: line %d symbol %d\n", Cur_Line, Cur_Symdol);
         }
