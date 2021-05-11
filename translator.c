@@ -52,27 +52,67 @@ static void match(int tokentype, char * expected) {
     }
 }
 
-void statements_translate() {
+void print_translate() {
     ASTnode * ASTtree;
     int reg;
 
+    match(T_PRINT, "print");
+
+    ASTtree = prattParser(0);
+    reg = AST_translate(ASTtree);
+    genPrint(reg);
+    genFreeAllRegs();
+
+    match(T_SEMI, ";");
+    if (Cur_Token.token_type == T_EOF)
+        return;
+}
+
+void assignment_translate() {
+    ASTnode * right;
+    ASTnode * left;
+    
+    match(T_IDENT, "identifier");
+
+    // check this identifier in global symbol table
+    if (findInTable(buf) == -1) {
+        fprintf(stderr, "Unresolved symbol \"%s\": line %d symbol %d", (char *) &buf, Cur_Line, Cur_Symbol);
+        exit(1);
+    }
+
+    
+
+}
+
+void declaration_translate() {
+    match(T_INT, "int");
+    match(T_IDENT, "identifier");
+    addInTable(buf);
+    //translate symbol
+    match(T_SEMI, ";");
+}
+
+void statements() {
     while (1) {
-
-        match(T_PRINT, "print");
-
-        ASTtree = prattParser(0);
-        reg = AST_translate(ASTtree);
-        genPrint(reg);
-        genFreeAllRegs();
-
-        match(T_SEMI, ";");
-        if (Cur_Token.token_type == T_EOF)
+        switch (Cur_Token.token_type)
+        {
+        case T_PRINT:
+            print_translate();
+            break;
+        case T_IDENT:
+            assignment_translate();
+        case T_INT:
+            declaration_translate();
+        case T_EOF:
             return;
+        default:
+            break;
+        }
     }
 }
 
 void generateCode() {
     genPreambul();
-    statements_translate();
+    statements();
     genPost();
 }

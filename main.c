@@ -4,13 +4,19 @@
 //GLOBAL VARIABLES
 int16_t Putback;
 Token Cur_Token;
+uint8_t buf[KEYWORD_BUFF_LEN];
+
 ASTnode * AST_Tree;
 FILE * source_file;
 FILE * output_file;
 
+int32_t globSeek;
+SymTable globalTable[SYMTABLE_SIZE];
+
+
 //for debug output
 uint32_t Cur_Line;
-uint32_t Cur_Symdol;
+uint32_t Cur_Symbol;
 
 
 void usage() {
@@ -20,7 +26,7 @@ void usage() {
 //init global variables
 void init_global() {
     Cur_Line = 1;
-    Cur_Symdol = 0;
+    Cur_Symbol = 0;
     Putback = -1;
 }
 

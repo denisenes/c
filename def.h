@@ -6,6 +6,8 @@
 #define ASCII_DIGITS_OFFSET 48
 #define KEYWORD_BUFF_LEN 512
 
+#define SYMTABLE_SIZE 2048
+
 // Token types
 enum {
   T_EOF,
@@ -15,18 +17,27 @@ enum {
   T_SLASH,
   T_INTLIT,
   T_SEMI,
-  T_PRINT
+  T_PRINT,
+  T_EQ,
+  T_INT,
+  T_IDENT
 };
 
 // Token structure
 typedef struct Token_m {
-    uint32_t token_type;
-    uint32_t int_value; // if token is an integer literal
+  uint32_t token_type;
+  uint32_t int_value; // if token is an integer literal
 } Token;
 
 // AST node types
 enum {
-  AST_ADD, AST_SUB, AST_MUL, AST_DIV, AST_INTLIT
+  AST_ADD,
+  AST_SUB,
+  AST_MUL,
+  AST_DIV,
+  AST_INTLIT,
+  AST_LVALUE_IDENT,
+  AST_RVALUE_IDENT
 };
 
 // Abstract Syntax Tree structure
@@ -36,5 +47,9 @@ typedef struct ASTnode_m {
   struct ASTnode_m * right;    // Right child
   int intvalue;				// value of A_INTLIT
 } ASTnode;
+
+typedef struct SymTable_m {
+  char * ident; 
+} SymTable;
 
 #endif

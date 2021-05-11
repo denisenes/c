@@ -29,7 +29,7 @@ static int OpPrec[] = { 0, 10, 10, 20, 20, 0 };
 // check if token has right precedence
 static int getPrec(int token) {
     if (OpPrec[token] == 0) {
-        fprintf(stderr, "Unexpected token: line %d symbol %d\n", Cur_Line, Cur_Symdol);
+        fprintf(stderr, "Unexpected token: line %d symbol %d\n", Cur_Line, Cur_Symbol);
     }
     return OpPrec[token];
 }
@@ -45,7 +45,7 @@ static ASTnode * getPrimary(void) {
         getToken();
         break;
     default:
-        fprintf(stderr, "Unexpected token (int literal expected): line %d symbol %d\n", Cur_Line, Cur_Symdol);
+        fprintf(stderr, "Unexpected token (int literal expected): line %d symbol %d\n", Cur_Line, Cur_Symbol);
         exit(1);
         break;
     }
@@ -69,7 +69,7 @@ static ASTnode * getBinaryOp(int tokentype, ASTnode * left, ASTnode * right) {
         return makeASTnode(AST_DIV, left, right, 0);
         break;
     default:
-        fprintf(stderr, "Unexpected token (binary op expected): line %d symbol %d\n", Cur_Line, Cur_Symdol);
+        fprintf(stderr, "Unexpected token (binary op expected): line %d symbol %d\n", Cur_Line, Cur_Symbol);
         exit(1);
         break;
     }

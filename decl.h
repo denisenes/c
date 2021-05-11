@@ -32,4 +32,8 @@ void asm64_pre();
 void asm64_post();
 void println(int res);
 
+// sym.c
+int findInTable(char * ident);
+int addInTable(char * ident);
+
 #endif

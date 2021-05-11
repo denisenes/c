@@ -2,8 +2,6 @@
 #include "def.h"
 #include "global.h"
 
-uint8_t buf[KEYWORD_BUFF_LEN];
-
 // Delimiters for lexer
 uint8_t * delims = " \n";
 
@@ -24,15 +22,15 @@ static int16_t next() {
 
     if (c == '\n') {
         Cur_Line++;
-        Cur_Symdol = 0;
+        Cur_Symbol = 0;
     } else {
-        Cur_Symdol++;
+        Cur_Symbol++;
     }
 
     return c;
 }
 
-// Get next symdol that is not a delimeter
+// Get next SCur_Symbol that is not a delimeter
 static int16_t next_ignore_delims() {
     int16_t c = next(source_file);
 
@@ -63,9 +61,13 @@ static int match_keyword() {
             if (!strcmp(buf, "print\0"))
                 return T_PRINT;
             break;
-        default:
-            fprintf(stderr, "Syntax error: unknown identifier %s\n", buf);
+        case 'i':
+            if (!strcmp(buf, "int\0"))
+                return T_INT;
             break;
+        default:
+            //fprintf(stderr, "Syntax error: unknown identifier %s\n", buf); old
+            return T_IDENT;
     }
 }
 
@@ -107,6 +109,9 @@ void getToken() {
     case ';':
         Cur_Token.token_type = T_SEMI;
         break;
+    case '=':
+        Cur_Token.token_type = T_EQ;
+        break;
     case -1:
         Cur_Token.token_type = T_EOF;
         break;
@@ -119,7 +124,7 @@ void getToken() {
             Putback = c;
             Cur_Token.token_type = get_keyword();
         } else {
-            fprintf(stderr, "Syntax error: line %d symbol %d\n", Cur_Line, Cur_Symdol);
+            fprintf(stderr, "Syntax error: line %d symbol %d\n", Cur_Line, Cur_Symbol);
         }
         break;
     }
