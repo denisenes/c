@@ -20,44 +20,52 @@ printint:
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	movq	$33, %r8
-	movq	$22, %r9
-	subq	%r9, %r8
-	movq	$10, %r9
-	movq	$23, %r10
-	imulq	%r10, %r9
-	addq	%r9, %r8
-	movq	$23, %r9
-	movq	$13, %r10
-	imulq	%r10, %r9
-	addq	%r9, %r8
-	movq	$56, %r9
-	movq	$2, %r10
-	imulq	%r10, %r9
-	movq	$78, %r10
-	movq	%r9,%rax
-	cqo
-	idivq	%r10
-	movq	%rax,%r9
-	subq	%r9, %r8
-	movq	$1, %r9
-	addq	%r9, %r8
-	movq	$1, %r9
-	addq	%r9, %r8
+	.comm	a,8,8
+	.comm	b,8,8
+	.comm	c,8,8
+	movq	$150, %r8
+	movq	%r8, a(%rip)
+	movq	$200, %r8
+	movq	%r8, b(%rip)
+	movq	$300, %r8
+	movq	%r8, c(%rip)
+	movq	a(%rip), %r8
 	movq	%r8, %rdi
 	call	printint
-	movq	$22, %r8
-	movq	$27, %r9
-	addq	%r9, %r8
+	movq	b(%rip), %r8
 	movq	%r8, %rdi
 	call	printint
-	movq	$145, %r8
-	movq	$10, %r9
-	imulq	%r9, %r8
-	movq	$5, %r9
-	movq	$10, %r10
+	movq	c(%rip), %r8
+	movq	%r8, %rdi
+	call	printint
+	movq	a(%rip), %r8
+	movq	a(%rip), %r9
+	addq	%r9, %r8
+	movq	%r8, a(%rip)
+	movq	a(%rip), %r8
+	movq	%r8, %rdi
+	call	printint
+	movq	a(%rip), %r8
+	movq	b(%rip), %r9
+	movq	c(%rip), %r10
 	imulq	%r10, %r9
-	subq	%r9, %r8
+	addq	%r9, %r8
+	movq	%r8, b(%rip)
+	movq	b(%rip), %r8
+	movq	%r8, %rdi
+	call	printint
+	movq	$10, %r8
+	movq	%r8, c(%rip)
+	movq	$10, %r8
+	movq	%r8, %rdi
+	call	printint
+	movq	c(%rip), %r8
+	movq	%r8, %rdi
+	call	printint
+	.comm	vvv,8,8
+	movq	$666, %r8
+	movq	%r8, vvv(%rip)
+	movq	vvv(%rip), %r8
 	movq	%r8, %rdi
 	call	printint
 	movl	$0, %eax

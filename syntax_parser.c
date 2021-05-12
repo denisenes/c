@@ -3,7 +3,7 @@
 #include "global.h"
 
 // Allocate new AST node, write input values into it and return it
-static ASTnode * makeASTnode(int32_t op, ASTnode * left, ASTnode * right, int32_t value) {
+ASTnode * makeASTnode(int32_t op, ASTnode * left, ASTnode * right, int32_t value) {
     ASTnode * newNode = (ASTnode *) malloc(sizeof(ASTnode));
     if (newNode == NULL) {
         //Heap is so small...
@@ -14,12 +14,12 @@ static ASTnode * makeASTnode(int32_t op, ASTnode * left, ASTnode * right, int32_
     newNode->op = op;
     newNode->left = left;
     newNode->right = right;
-    newNode->intvalue = value;
+    newNode->v.intvalue = value;
 
     return newNode;
 }
 
-static ASTnode * makeASTleaf(int32_t op, int32_t value) {
+ASTnode * makeASTleaf(int32_t op, int32_t value) {
     return makeASTnode(op, NULL, NULL, value);
 }
 
@@ -27,7 +27,7 @@ static ASTnode * makeASTleaf(int32_t op, int32_t value) {
 static int OpPrec[] = { 0, 10, 10, 20, 20, 0 };
 
 // check if token has right precedence
-static int getPrec(int token) {
+static int getPrec(uint32_t token) {
     if (OpPrec[token] == 0) {
         fprintf(stderr, "Unexpected token: line %d symbol %d\n", Cur_Line, Cur_Symbol);
     }
@@ -37,48 +37,50 @@ static int getPrec(int token) {
 // make AST leaf from integer literal
 static ASTnode * getPrimary(void) {
     ASTnode * node;
+    int id;
 
     switch (Cur_Token.token_type)
     {
     case T_INTLIT:
         node = makeASTleaf(AST_INTLIT, Cur_Token.int_value);
-        getToken();
+        break;
+    case T_IDENT:
+        id = findInTable(buf);
+        if (id == -1) {
+            fprintf(stderr, "Unresolved symbol \"%s\": line %d symbol %d", (char *) &buf, Cur_Line, Cur_Symbol);
+            exit(1);
+        }
+        node = makeASTleaf(AST_IDENT, id);
         break;
     default:
         fprintf(stderr, "Unexpected token (int literal expected): line %d symbol %d\n", Cur_Line, Cur_Symbol);
         exit(1);
-        break;
     }
-
+    getToken();
     return node;
 }
 
-static ASTnode * getBinaryOp(int tokentype, ASTnode * left, ASTnode * right) {
+static ASTnode * getBinaryOp(uint32_t tokentype, ASTnode * left, ASTnode * right) {
     switch (tokentype)
     {
     case T_PLUS:
         return makeASTnode(AST_ADD, left, right, 0);
-        break;
     case T_MINUS:
         return makeASTnode(AST_SUB, left, right, 0);
-        break;
     case T_STAR:
         return makeASTnode(AST_MUL, left, right, 0);
-        break;
     case T_SLASH:
         return makeASTnode(AST_DIV, left, right, 0);
-        break;
     default:
         fprintf(stderr, "Unexpected token (binary op expected): line %d symbol %d\n", Cur_Line, Cur_Symbol);
         exit(1);
-        break;
     }
 }
 
 // Build AST from token stream
 ASTnode * prattParser(int ptp) {
     ASTnode * left, * right;
-    int tokentype;
+    uint32_t tokentype;
 
     //printf("1) TOKEN: %d\n", Cur_Token.token_type);
     left = getPrimary();
@@ -130,6 +132,8 @@ void testParser(ASTnode * cur_node, ASTnode * parent, int side) {
     case TO_RIGHT:
         printf("right node: "); 
         break;
+    default:
+        fprintf(stderr, "Something went wrong\n");
     }
 
     switch (cur_node->op)

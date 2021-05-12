@@ -51,7 +51,7 @@ int asm64_mul(int reg1, int reg2) {
     return reg1;
 }
 
-int asm64_ld(int val) {
+int asm64_ld_const(int val) {
     int r = asm64_allocate_reg();
     fprintf(output_file, "\tmovq\t$%d, %s\n", val, regs[r]);
     return r;
@@ -92,6 +92,21 @@ void asm64_post() {
 	"\tpopq	%rbp\n"
 	"\tret\n",
     output_file);
+}
+
+int asm64_ld(char * ident) {
+    int reg = asm64_allocate_reg();
+    fprintf(output_file, "\tmovq\t%s(\%%rip), %s\n", ident, regs[reg]);
+    return reg;
+}
+
+int asm64_st(int reg, char * ident) {
+    fprintf(output_file, "\tmovq\t%s, %s(\%%rip)\n", regs[reg], ident);
+    return reg;
+}
+
+void asm64_symbol(char * symbol) {
+    fprintf(output_file, "\t.comm\t%s,8,8\n", symbol);
 }
 
 void println(int res) {

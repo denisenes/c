@@ -1,3 +1,23 @@
-print 33 - 22 + 10 * 23 + 23 * 13    -  56 * 2 / 78   + 1 + 1;
-print 22 + 27;
-print 145 * 10 - 5 * 10; 
+int a; int b; int c;
+
+a = 150;
+b = 200;
+c = 300;
+
+print a;
+print b;
+print c;
+
+a = a + a;
+print a;
+
+b = a + b * c;
+print b;
+
+c = 10;
+print 10;
+print c;
+
+int vvv;
+vvv = 666;
+print vvv;

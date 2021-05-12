@@ -17,7 +17,7 @@ static int16_t next() {
         return c;
     }
 
-    c = fgetc(source_file);
+    c = (int16_t) fgetc(source_file);
     //printf("--debug: sym %d\n", c);
 
     if (c == '\n') {
@@ -32,7 +32,7 @@ static int16_t next() {
 
 // Get next SCur_Symbol that is not a delimeter
 static int16_t next_ignore_delims() {
-    int16_t c = next(source_file);
+    int16_t c = next();
 
     while (strchr(delims, c) != NULL) {
         c = next(source_file);
@@ -43,12 +43,12 @@ static int16_t next_ignore_delims() {
 
 static int get_int() {
     int intlit = 0;
-    int16_t c = next(source_file);
+    int16_t c = next();
 
     while (isdigit(c)) {
         intlit *= 10; //shift digits left
         intlit += c - ASCII_DIGITS_OFFSET;
-        c = next(source_file);
+        c = next();
     }
 
     Putback = c;
@@ -66,13 +66,13 @@ static int match_keyword() {
                 return T_INT;
             break;
         default:
-            //fprintf(stderr, "Syntax error: unknown identifier %s\n", buf); old
+            //fprintf(stderr, "Syntax error: unknown identifier %s\n", buf); old, I'll delete this soon
             return T_IDENT;
     }
 }
 
 static int get_keyword() {
-    int16_t c = next(source_file);
+    int16_t c = next();
     int i = 0;
 
     while (isalpha(c) || c == '_' || isdigit(c)) {
@@ -90,7 +90,7 @@ static int get_keyword() {
 }
 
 void getToken() {
-    int16_t c = next_ignore_delims(source_file);
+    int16_t c = next_ignore_delims();
 
     switch (c)
     {

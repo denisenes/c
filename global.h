@@ -5,7 +5,7 @@ extern ASTnode AST_Tree;
 extern FILE * source_file;
 extern FILE * output_file;
 extern SymTable globalTable[SYMTABLE_SIZE];
-extern uint8_t buf[KEYWORD_BUFF_LEN];
+extern char buf[KEYWORD_BUFF_LEN];
 
 extern int32_t globSeek;
 
