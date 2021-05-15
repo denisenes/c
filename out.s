@@ -62,11 +62,45 @@ main:
 	movq	c(%rip), %r8
 	movq	%r8, %rdi
 	call	printint
-	.comm	vvv,8,8
+	.comm	po,8,8
 	movq	$666, %r8
-	movq	%r8, vvv(%rip)
-	movq	vvv(%rip), %r8
+	movq	%r8, po(%rip)
+	movq	po(%rip), %r8
 	movq	%r8, %rdi
+	call	printint
+	.comm	a1,8,8
+	movq	$10, %r8
+	movq	%r8, a1(%rip)
+	.comm	a2,8,8
+	movq	$21, %r8
+	movq	%r8, a2(%rip)
+	movq	a1(%rip), %r8
+	movq	a2(%rip), %r9
+	cmpq	%r9, %r8
+	setg	%r9b
+	andq	$255,%r9
+	movq	%r9, %rdi
+	call	printint
+	movq	a1(%rip), %r8
+	movq	a2(%rip), %r9
+	cmpq	%r9, %r8
+	setl	%r9b
+	andq	$255,%r9
+	movq	%r9, %rdi
+	call	printint
+	movq	a1(%rip), %r8
+	movq	a2(%rip), %r9
+	cmpq	%r9, %r8
+	sete	%r9b
+	andq	$255,%r9
+	movq	%r9, %rdi
+	call	printint
+	movq	a1(%rip), %r8
+	movq	a2(%rip), %r9
+	cmpq	%r9, %r8
+	setne	%r9b
+	andq	$255,%r9
+	movq	%r9, %rdi
 	call	printint
 	movl	$0, %eax
 	popq	%rbp

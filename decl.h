@@ -27,6 +27,7 @@ int asm64_add(int reg1, int reg2);
 int asm64_sub(int reg1, int reg2);
 int asm64_div(int reg1, int reg2);
 int asm64_mul(int reg1, int reg2);
+int asm64_cmp(int reg1, int reg2, char * check);
 int asm64_ld_const(int val);
 int asm64_ld(char * ident);
 int asm64_st(int reg, char * ident);

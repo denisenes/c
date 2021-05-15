@@ -18,19 +18,23 @@ int genDiv(int left, int right) {
     return asm64_div(left, right);
 }
 
+int genCmp(int left, int right, char * check) {
+    return asm64_cmp(left, right, check);
+}
+
 int genLoadConst(int32_t value) {
     return asm64_ld_const(value);
 }
 
-int genLd(char * ident) {
+int genLd(char *ident) {
     return asm64_ld(ident);
 }
 
-int genSt(int reg, char * ident) {
+int genSt(int reg, char *ident) {
     return asm64_st(reg, ident);
 }
 
-void genGlobSymbol(char * symbol) {
+void genGlobSymbol(char *symbol) {
     asm64_symbol(symbol);
 }
 
@@ -50,37 +54,48 @@ void genFreeAllRegs() {
     asm64_freeall_reg();
 }
 
-static int AST_translate(ASTnode * node, int reg) {
+static int AST_translate(ASTnode *node, int reg) {
     int left_reg, right_reg;
 
     if (node->left) left_reg = AST_translate(node->left, -1);
     if (node->left) right_reg = AST_translate(node->right, left_reg);
 
-    switch (node->op)
-    {
-    case AST_ADD:
-        return genAdd(left_reg, right_reg);
-    case AST_SUB:
-        return genSub(left_reg, right_reg);
-    case AST_DIV:
-        return genDiv(left_reg, right_reg);
-    case AST_MUL:
-        return genMul(left_reg, right_reg);
-    case AST_INTLIT:
-        return genLoadConst(node->v.intvalue);
-    case AST_IDENT:
-        return genLd(globalTable[node->v.id].ident);
-    case AST_LVALUE:
-        return genSt(reg, globalTable[node->v.id].ident);
-    case AST_ASSIGN:
-        return right_reg;
-    default:
-        fprintf(stderr, "Unknown AST operator: %s\n", strerror(errno));
-        exit(1);
+    switch (node->op) {
+        case AST_ADD:
+            return genAdd(left_reg, right_reg);
+        case AST_SUB:
+            return genSub(left_reg, right_reg);
+        case AST_DIV:
+            return genDiv(left_reg, right_reg);
+        case AST_MUL:
+            return genMul(left_reg, right_reg);
+        case AST_EQ:
+            return genCmp(left_reg, right_reg, "sete");
+        case AST_NEQ:
+            return genCmp(left_reg, right_reg, "setne");
+        case AST_GE:
+            return genCmp(left_reg, right_reg, "setge");
+        case AST_GT:
+            return genCmp(left_reg, right_reg, "setg");
+        case AST_LE:
+            return genCmp(left_reg, right_reg, "setle");
+        case AST_LT:
+            return genCmp(left_reg, right_reg, "setl");
+        case AST_INTLIT:
+            return genLoadConst(node->v.intvalue);
+        case AST_IDENT:
+            return genLd(globalTable[node->v.id].ident);
+        case AST_LVALUE:
+            return genSt(reg, globalTable[node->v.id].ident);
+        case AST_ASSIGN:
+            return right_reg;
+        default:
+            fprintf(stderr, "Unknown AST operator: %s\n", strerror(errno));
+            exit(1);
     }
 }
 
-static void match(int tokentype, char * expected) {
+static void match(int tokentype, char *expected) {
     if (tokentype == Cur_Token.token_type) {
         getToken();
     } else {
@@ -90,7 +105,7 @@ static void match(int tokentype, char * expected) {
 }
 
 void print_translate() {
-    ASTnode * ASTtree;
+    ASTnode *ASTtree;
     int reg;
 
     match(T_PRINT, "print");
@@ -105,12 +120,13 @@ void print_translate() {
         return;
 }
 
+// ident = expression;
 void assignment_translate() {
-    ASTnode * right;
-    ASTnode * left;
-    ASTnode * localTree;
+    ASTnode *right;
+    ASTnode *left;
+    ASTnode *localTree;
     int id;
-    
+
     match(T_IDENT, "identifier");
 
     // check this identifier in global symbol table
@@ -123,7 +139,7 @@ void assignment_translate() {
     // save id of variable in the right leaf
     right = makeASTleaf(AST_LVALUE, id);
 
-    match(T_EQ, "=");
+    match(T_ASSIGN, "=");
 
     // parse expression on the right side and save it in the left leaf
     left = prattParser(-1);
@@ -137,6 +153,7 @@ void assignment_translate() {
     match(T_SEMI, ";");
 }
 
+// int ident;
 void declaration_translate() {
     match(T_INT, "int");
     match(T_IDENT, "identifier");
@@ -148,21 +165,20 @@ void declaration_translate() {
 
 void statements() {
     while (1) {
-        switch (Cur_Token.token_type)
-        {
-        case T_PRINT:
-            print_translate();
-            break;
-        case T_IDENT:
-            assignment_translate();
-            break;
-        case T_INT:
-            declaration_translate();
-            break;
-        case T_EOF:
-            return;
-        default:
-            break;
+        switch (Cur_Token.token_type) {
+            case T_PRINT:
+                print_translate();
+                break;
+            case T_IDENT:
+                assignment_translate();
+                break;
+            case T_INT:
+                declaration_translate();
+                break;
+            case T_EOF:
+                return;
+            default:
+                break;
         }
     }
 }

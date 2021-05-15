@@ -1,8 +1,6 @@
 #ifndef HAHA_BENIS_DEF
 #define HAHA_BENIS_DEF
 
-#define _TOKEN_MAX_ID 5
-
 #define ASCII_DIGITS_OFFSET 48
 #define KEYWORD_BUFF_LEN 512
 
@@ -10,17 +8,17 @@
 
 // Token types
 enum {
-  T_EOF,
-  T_PLUS,
-  T_MINUS,
-  T_STAR,
-  T_SLASH,
-  T_INTLIT,
-  T_SEMI,
-  T_PRINT,
-  T_EQ,
-  T_INT,
-  T_IDENT
+  T_EOF,                               // token that indicates about end of the input file
+  T_PLUS, T_MINUS, T_STAR, T_SLASH,    // arithmetic operators
+  T_EQ, T_NEQ,                         // #
+  T_LT, T_GT,                          // # comparison operators
+  T_LE, T_GE,                          // #
+  T_INTLIT,                            // integer literal e.g. 123
+  T_SEMI,                              // statements separator ';'
+  T_PRINT,                             // print keyword
+  T_ASSIGN,                            // variable assignment operator// #
+  T_INT,                               // int type
+  T_IDENT                              // variable identifier
 };
 
 // Token structure
@@ -31,10 +29,10 @@ typedef struct Token_m {
 
 // AST node types
 enum {
-  AST_ADD,
-  AST_SUB,
-  AST_MUL,
-  AST_DIV,
+  AST_ADD, AST_SUB, AST_MUL, AST_DIV,
+  AST_EQ, AST_NEQ,
+  AST_GT, AST_GE,
+  AST_LT, AST_LE,
   AST_INTLIT,
   AST_LVALUE,
   AST_IDENT,

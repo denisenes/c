@@ -60,11 +60,9 @@ static int match_keyword() {
         case 'p':
             if (!strcmp(buf, "print\0"))
                 return T_PRINT;
-            break;
         case 'i':
             if (!strcmp(buf, "int\0"))
                 return T_INT;
-            break;
         default:
             //fprintf(stderr, "Syntax error: unknown identifier %s\n", buf); old, I'll delete this soon
             return T_IDENT;
@@ -110,7 +108,38 @@ void getToken() {
         Cur_Token.token_type = T_SEMI;
         break;
     case '=':
-        Cur_Token.token_type = T_EQ;
+        c = next();
+        if (c == '=') {
+            Cur_Token.token_type = T_EQ;
+        } else {
+            Putback = c;
+            Cur_Token.token_type = T_ASSIGN;
+        }
+        break;
+    case '!':
+        c = next();
+        if (c == '=') {
+            Cur_Token.token_type = T_NEQ;
+        } else {
+            fprintf(stderr, "Unexpected symbol '%c': line %d symbol %d\n", c, Cur_Line, Cur_Symbol);
+            exit(1);
+        }
+        break;
+    case '>':
+        c = next();
+        if (c == '=') {
+            Cur_Token.token_type = T_GE;
+        } else {
+            Cur_Token.token_type = T_GT;
+        }
+        break;
+    case '<':
+        c = next();
+        if (c == '=') {
+            Cur_Token.token_type = T_LE;
+        } else {
+            Cur_Token.token_type = T_LT;
+        }
         break;
     case -1:
         Cur_Token.token_type = T_EOF;

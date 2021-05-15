@@ -1,8 +1,8 @@
 #include "decl.h"
-#include "def.h"
 #include "global.h"
 
 static char * regs[4] = {"%r8", "%r9", "%r10", "%r11"};
+static char * bregs[4] = {"%r8b", "%r9b", "%r10b", "%r11b"};
 static int reg_pool[4];
 
 static int asm64_allocate_reg() {
@@ -49,6 +49,14 @@ int asm64_mul(int reg1, int reg2) {
     fprintf(output_file, "\timulq\t%s, %s\n", regs[reg2], regs[reg1]);
     asm64_free_reg(reg2);
     return reg1;
+}
+
+int asm64_cmp(int reg1, int reg2, char * check) {
+    fprintf(output_file, "\tcmpq\t%s, %s\n", regs[reg2], regs[reg1]);
+    fprintf(output_file, "\t%s\t%s\n", check, bregs[reg2]);
+    fprintf(output_file, "\tandq\t$255,%s\n", regs[reg2]);
+    asm64_free_reg(reg1);
+    return reg2;
 }
 
 int asm64_ld_const(int val) {
